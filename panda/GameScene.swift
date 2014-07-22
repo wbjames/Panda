@@ -1,45 +1,51 @@
-//
-//  GameScene.swift
-//  panda
-//
-//  Created by wubin on 7/17/14.
-//  Copyright (c) 2014 wubin. All rights reserved.
-//
-
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene,ProtocolMainScene {
+    // define var
+    lazy var panda = Panda()
+    lazy var platformFactory = PlatformFactory()
+    
+    var moveSpeed:CGFloat = 15
+    var lastDis:CGFloat = 0.0
+    
     override func didMoveToView(view: SKView) {
-        /* Setup your scene here */
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Hello, World!";
-        myLabel.fontSize = 65;
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
+        let skyColor = SKColor(red: 133/255, green: 197/255, blue: 207/255, alpha: 1)
+        self.backgroundColor = skyColor
         
-        self.addChild(myLabel)
+        panda.position = CGPointMake(200, 400)
+        self.addChild(panda)
+        
+        self.addChild(platformFactory)
+        platformFactory.delegate = self
+        platformFactory.sceneWidth = self.frame.width
+        platformFactory.createPlatform(10, x: 0, y: 200)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        /* Called when a touch begins */
-        
-        for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
-            
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
-            self.addChild(sprite)
+        if panda.status == Status.run {
+            panda.jump()
+        } else if panda.status == Status.jump {
+            panda.roll()
         }
     }
    
     override func update(currentTime: CFTimeInterval) {
-        /* Called before each frame is rendered */
+        lastDis -= moveSpeed
+        if lastDis <= 0 {
+            println("new platform")
+            //platformFactory.createPlatform(1, x: 1500, y: 200)
+            platformFactory.createPlatformRandom()
+        }
+        
+        platformFactory.moving(moveSpeed)
     }
+    
+    func onGetData(dist: CGFloat) {
+        self.lastDis = dist
+    }
+}
+
+
+protocol ProtocolMainScene{
+    func onGetData(dist: CGFloat)
 }
