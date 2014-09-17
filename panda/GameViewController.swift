@@ -14,7 +14,7 @@ extension SKNode {
         
         let path = NSBundle.mainBundle().pathForResource(file, ofType: "sks")
         
-        var sceneData = NSData.dataWithContentsOfFile(path, options: .DataReadingMappedIfSafe, error: nil)
+        var sceneData = NSData.dataWithContentsOfFile(path!, options: .DataReadingMappedIfSafe, error: nil)
         var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
         
         archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
@@ -41,6 +41,7 @@ class GameViewController: UIViewController {
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .AspectFill
             
+            println(scene.size)
             skView.presentScene(scene)
         }
     }

@@ -28,6 +28,7 @@ class PlatformFactory:SKNode{
         let platform = Platform()
         platform.position = CGPointMake(x, y)
         
+        
         let platform_left = SKSpriteNode(texture: textureLeft)
         platform_left.anchorPoint = CGPointMake(0.0, 0.9)
         
